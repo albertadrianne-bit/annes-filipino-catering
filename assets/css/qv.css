@@ -1,0 +1,14 @@
+/* Quick View modal */
+.annesfs-qv{position:fixed;inset:0;z-index:99999;display:none}
+.annesfs-qv.is-open{display:block}
+.annesfs-qv__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.annesfs-qv__panel{position:relative;max-width:920px;margin:5vh auto;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:16px}
+.annesfs-qv__close{position:absolute;right:10px;top:8px;border:0;background:transparent;font-size:28px;line-height:1;cursor:pointer}
+.annesfs-qv__content{padding:6px 6px 10px}
+.annesfs-qv__loading{padding:40px;text-align:center}
+.qv-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.qv-title{font-weight:700;font-size:1.15rem}
+.qv-body{display:grid;grid-template-columns:1fr 1.1fr;gap:18px}
+@media (max-width: 780px){ .qv-body{grid-template-columns:1fr} }
+.qv-form .variations select{width:100%}
+.qv-form .quantity input.qty{max-width:90px}

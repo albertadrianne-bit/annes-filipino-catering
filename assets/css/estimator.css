@@ -1,0 +1,13 @@
+/* Guest estimator */
+.annesfs-ge{border:1px solid #eee;border-radius:12px;padding:16px;background:#fff;box-shadow:0 6px 18px rgba(0,0,0,.05);margin:10px 0}
+.annesfs-ge__row{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.annesfs-ge__row label{min-width:120px;font-weight:600}
+.annesfs-ge__input,.annesfs-ge__select{flex:1;padding:10px;border:1px solid #ddd;border-radius:10px}
+.annesfs-ge__btn{margin-top:6px;padding:10px 14px;border:0;border-radius:10px;background:#111;color:#fff;cursor:pointer}
+.annesfs-ge__btn:hover{opacity:.9}
+.annesfs-ge__result{margin-top:14px;padding:12px;border:1px dashed #ddd;border-radius:10px;background:#fafafa}
+.annesfs-ge__summary{margin-bottom:8px;font-weight:600}
+.annesfs-ge__actions{display:flex;gap:12px;flex-wrap:wrap}
+.annesfs-ge__btn-secondary{padding:8px 12px;border:1px solid #ccc;background:#fff;border-radius:10px;cursor:pointer}
+.annesfs-ge__link{text-decoration:underline}
+.annesfs-ge__note{font-size:.9em;color:#555}
