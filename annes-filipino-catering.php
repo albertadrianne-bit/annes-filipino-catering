@@ -31,3 +31,10 @@ require_once ANNESFS_DIR . 'includes/settings.php';
 require_once ANNESFS_DIR . 'includes/quickview.php';
 require_once ANNESFS_DIR . 'includes/estimator-shortcode.php';
 require_once ANNESFS_DIR . 'includes/discount-tiers.php'; // NEW for 2.1.6
+
+require_once ANNESFS_DIR . 'includes/updater.php';
+new AnnesFS_GitHub_Updater(
+  'albertadrianne-bit',         // GitHub user/org
+  'annes-filipino-catering',    // GitHub repo
+  plugin_basename(__FILE__)     // this plugin’s main file
+);
