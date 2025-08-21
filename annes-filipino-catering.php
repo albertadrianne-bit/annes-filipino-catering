@@ -2,14 +2,14 @@
 /**
  * Plugin Name: Anne's Filipino Catering
  * Description: One-page catering flow: bundle builder hooks, badges, quote flow, quick-view variation modal, and guest count estimator.
- * Version: 2.1.5-full
+ * Version: 2.1.6-dev
  * Author: Anne's Filipino Sweet Spot
  * Text Domain: annesfs
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define('ANNESFS_VER', '2.1.5-full');
+define('ANNESFS_VER', '2.1.6-dev');
 define('ANNESFS_DIR', plugin_dir_path(__FILE__));
 define('ANNESFS_URL', plugin_dir_url(__FILE__));
 
@@ -30,3 +30,4 @@ add_action('wp_enqueue_scripts', function(){
 require_once ANNESFS_DIR . 'includes/settings.php';
 require_once ANNESFS_DIR . 'includes/quickview.php';
 require_once ANNESFS_DIR . 'includes/estimator-shortcode.php';
+require_once ANNESFS_DIR . 'includes/discount-tiers.php'; // NEW for 2.1.6
