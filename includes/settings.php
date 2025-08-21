@@ -82,6 +82,97 @@ function annesfs_settings_page(){
       </table>
 
       <p><button class="button button-primary" name="annesfs_save" value="1">Save settings</button></p>
+            <h2 class="title">Checkout & Payments</h2>
+      <?php $deposit = get_option('annesfs_deposit_percent', 50); ?>
+      <table class="form-table">
+        <tr>
+          <th>Deposit percent</th>
+          <td>
+            <input type="number" min="0" max="100" step="1" name="annesfs_deposit_percent" value="<?php echo esc_attr($deposit); ?>" style="width:90px;"> %
+            <p class="description">Shown in checkout summary and used in deposit math.</p>
+          </td>
+        </tr>
+      </table>
+
+      <h2 class="title">Order Minimums & Delivery</h2>
+      <?php
+        $min_pickup   = get_option('annesfs_min_pickup', 50);
+        $min_delivery = get_option('annesfs_min_delivery', 150);
+        $del_fee      = get_option('annesfs_delivery_fee', 25);
+        $free_over    = get_option('annesfs_free_delivery_over', 600);
+        $kitchen_zip  = get_option('annesfs_kitchen_zip', '85392');
+        $deliver_radius = get_option('annesfs_delivery_radius_miles', 10);
+        $zip_allow    = get_option('annesfs_zip_allowlist', ''); // comma-separated
+      ?>
+      <table class="form-table">
+        <tr>
+          <th>Pickup minimum ($)</th>
+          <td><input type="number" step="1" name="annesfs_min_pickup" value="<?php echo esc_attr($min_pickup); ?>" style="width:120px;"></td>
+        </tr>
+        <tr>
+          <th>Delivery minimum ($)</th>
+          <td><input type="number" step="1" name="annesfs_min_delivery" value="<?php echo esc_attr($min_delivery); ?>" style="width:120px;"></td>
+        </tr>
+        <tr>
+          <th>Delivery fee (flat, $)</th>
+          <td><input type="number" step="1" name="annesfs_delivery_fee" value="<?php echo esc_attr($del_fee); ?>" style="width:120px;"></td>
+        </tr>
+        <tr>
+          <th>Free delivery over ($)</th>
+          <td><input type="number" step="1" name="annesfs_free_delivery_over" value="<?php echo esc_attr($free_over); ?>" style="width:120px;"></td>
+        </tr>
+        <tr>
+          <th>Kitchen ZIP (origin)</th>
+          <td><input type="text" name="annesfs_kitchen_zip" value="<?php echo esc_attr($kitchen_zip); ?>" style="width:140px;"></td>
+        </tr>
+        <tr>
+          <th>Delivery radius (miles)</th>
+          <td><input type="number" step="1" name="annesfs_delivery_radius_miles" value="<?php echo esc_attr($deliver_radius); ?>" style="width:120px;">
+            <p class="description">Used if allow‑list below is empty.</p>
+          </td>
+        </tr>
+        <tr>
+          <th>ZIP allow‑list (optional)</th>
+          <td>
+            <textarea name="annesfs_zip_allowlist" rows="3" class="large-text code" placeholder="85392, 85323, 85037"><?php echo esc_textarea($zip_allow); ?></textarea>
+            <p class="description">If provided, only these ZIPs are eligible for delivery.</p>
+          </td>
+        </tr>
+      </table>
+
+      <h2 class="title">Quotes & UI</h2>
+      <?php
+        $quote_emails   = get_option('annesfs_quote_recipients', get_option('admin_email'));
+        $quote_log      = get_option('annesfs_quote_log_admin', 1);
+        $ui_quote_btn   = get_option('annesfs_ui_show_quote', 1);
+        $ui_offcanvas   = get_option('annesfs_ui_offcanvas_cart', 1);
+        $thumb_size     = get_option('annesfs_minicart_thumb', 56);
+      ?>
+      <table class="form-table">
+        <tr>
+          <th>Quote notification emails</th>
+          <td>
+            <input type="text" name="annesfs_quote_recipients" value="<?php echo esc_attr($quote_emails); ?>" class="regular-text">
+            <p class="description">Comma‑separated list. Default is your admin email.</p>
+          </td>
+        </tr>
+        <tr>
+          <th>Log quotes in WP Admin</th>
+          <td><label><input type="checkbox" name="annesfs_quote_log_admin" value="1" <?php checked($quote_log,1); ?>> Enable</label></td>
+        </tr>
+        <tr>
+          <th>Show “Request a Quote” button</th>
+          <td><label><input type="checkbox" name="annesfs_ui_show_quote" value="1" <?php checked($ui_quote_btn,1); ?>> Enable</label></td>
+        </tr>
+        <tr>
+          <th>Use off‑canvas cart</th>
+          <td><label><input type="checkbox" name="annesfs_ui_offcanvas_cart" value="1" <?php checked($ui_offcanvas,1); ?>> Enable</label></td>
+        </tr>
+        <tr>
+          <th>Mini‑cart image size (px)</th>
+          <td><input type="number" step="1" name="annesfs_minicart_thumb" value="<?php echo esc_attr($thumb_size); ?>" style="width:120px;"></td>
+        </tr>
+      </table>
     </form>
   </div>
   <?php
