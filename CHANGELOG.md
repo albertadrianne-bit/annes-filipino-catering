@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.6-dev – Aug 2025
+- NEW: Dynamic discount tiers (by total cart quantity) with admin settings.
+- NEW: Price-aware “Add to Cart” button inside the Quick-View modal (updates with variation & qty).
+- Polish: groundwork for customer-side UX improvements.
+  
 ## 2.1.5 – Aug 2025
 - Added Guest Count Estimator shortcode.
 - Added Quick-View modal with variation selection.
