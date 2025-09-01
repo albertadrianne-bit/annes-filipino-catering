@@ -3,7 +3,6 @@ if ( ! defined('ABSPATH') ) exit;
 
 add_action('admin_menu', function(){
   add_menu_page("Anne's Catering","Anne's Catering",'manage_options','annesfs-settings','annesfs_settings_page','dashicons-food',56);
-  add_submenu_page('annesfs-settings','Bundles','Bundles','manage_options','edit.php?post_type=annesfs_bundle');
 });
 
 function annesfs_bool($opt,$def=false){ return !!intval(get_option($opt, $def?1:0)); }
@@ -12,26 +11,31 @@ function annesfs_settings_page(){
   if ( isset($_POST['annesfs_save']) ){
     check_admin_referer('annesfs_save_settings');
 
+    // Discount tiers
     update_option('annesfs_tiers_enabled', isset($_POST['annesfs_tiers_enabled'])?1:0);
     foreach(['t1_qty','t1_disc','t2_qty','t2_disc','t3_qty','t3_disc'] as $k){
       update_option('annesfs_'.$k, sanitize_text_field($_POST['annesfs_'.$k] ?? ''));
     }
 
+    // Estimator
     update_option('annesfs_est_portions', wp_kses_post($_POST['annesfs_est_portions'] ?? '{"small":[2,4],"medium":[8,10],"large":[12,15]}'));
     update_option('annesfs_est_rice_adj', floatval($_POST['annesfs_est_rice_adj'] ?? 0.12));
     update_option('annesfs_est_show_floating', isset($_POST['annesfs_est_show_floating'])?1:0);
 
-    update_option('annesfs_badge_classic',  sanitize_text_field($_POST['annesfs_badge_classic']  ?? 'classic'));
-    update_option('annesfs_badge_premium',  sanitize_text_field($_POST['annesfs_badge_premium']  ?? 'premium'));
-    update_option('annesfs_badge_elite',    sanitize_text_field($_POST['annesfs_badge_elite']    ?? 'elite'));
-
-    update_option('annesfs_tooltip_enabled',   isset($_POST['annesfs_tooltip_enabled'])?1:0);
-    update_option('annesfs_tooltip_text',      wp_kses_post($_POST['annesfs_tooltip_text'] ?? 'Estimate based on hearty Filipino servings (e.g., 5 medium trays × 8 guests each). Actual servings may vary depending on menu mix and whether rice/noodles are included.'));
+    // Badges & tooltips
+    update_option('annesfs_badge_classic', sanitize_text_field($_POST['annesfs_badge_classic'] ?? 'classic'));
+    update_option('annesfs_badge_premium', sanitize_text_field($_POST['annesfs_badge_premium'] ?? 'premium'));
+    update_option('annesfs_badge_elite', sanitize_text_field($_POST['annesfs_badge_elite'] ?? 'elite'));
+    update_option('annesfs_tooltip_enabled', isset($_POST['annesfs_tooltip_enabled'])?1:0);
+    update_option('annesfs_tooltip_text', wp_kses_post($_POST['annesfs_tooltip_text'] ?? 'Estimate based on hearty Filipino servings (e.g., 5 medium trays × 8 guests each). Actual servings may vary depending on menu mix and whether rice/noodles are included.'));
     update_option('annesfs_show_guest_badges', isset($_POST['annesfs_show_guest_badges'])?1:0);
 
+    // Payment/Delivery
     update_option('annesfs_deposit_percent', floatval($_POST['annesfs_deposit_percent'] ?? 50));
-    update_option('annesfs_delivery_fee',   floatval($_POST['annesfs_delivery_fee']   ?? 25));
+    update_option('annesfs_delivery_fee', floatval($_POST['annesfs_delivery_fee'] ?? 25));
     update_option('annesfs_free_delivery_over', floatval($_POST['annesfs_free_delivery_over'] ?? 600));
+
+    // Quote toggle
     update_option('annesfs_request_quote_enabled', isset($_POST['annesfs_request_quote_enabled'])?1:0);
 
     echo '<div class="updated"><p>Settings saved.</p></div>';
