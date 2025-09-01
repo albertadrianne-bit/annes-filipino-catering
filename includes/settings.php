@@ -3,177 +3,75 @@ if ( ! defined('ABSPATH') ) exit;
 
 add_action('admin_menu', function(){
   add_menu_page("Anne's Catering","Anne's Catering",'manage_options','annesfs-settings','annesfs_settings_page','dashicons-food',56);
+  add_submenu_page('annesfs-settings','Bundles','Bundles','manage_options','edit.php?post_type=annesfs_bundle');
 });
 
-function annesfs_settings_page(){
-  if (!current_user_can('manage_options')) return;
+function annesfs_bool($opt,$def=false){ return !!intval(get_option($opt, $def?1:0)); }
 
-  if (isset($_POST['annesfs_save'])){
+function annesfs_settings_page(){
+  if ( isset($_POST['annesfs_save']) ){
     check_admin_referer('annesfs_save_settings');
 
-    // Existing settings
-    update_option('annesfs_cat_classic', sanitize_text_field($_POST['annesfs_cat_classic'] ?? 'classic'));
-    update_option('annesfs_cat_premium', sanitize_text_field($_POST['annesfs_cat_premium'] ?? 'premium'));
-    update_option('annesfs_cat_elite',   sanitize_text_field($_POST['annesfs_cat_elite']   ?? 'elite'));
+    update_option('annesfs_tiers_enabled', isset($_POST['annesfs_tiers_enabled'])?1:0);
+    foreach(['t1_qty','t1_disc','t2_qty','t2_disc','t3_qty','t3_disc'] as $k){
+      update_option('annesfs_'.$k, sanitize_text_field($_POST['annesfs_'.$k] ?? ''));
+    }
+
     update_option('annesfs_est_portions', wp_kses_post($_POST['annesfs_est_portions'] ?? '{"small":[2,4],"medium":[8,10],"large":[12,15]}'));
+    update_option('annesfs_est_rice_adj', floatval($_POST['annesfs_est_rice_adj'] ?? 0.12));
+    update_option('annesfs_est_show_floating', isset($_POST['annesfs_est_show_floating'])?1:0);
 
-    // NEW: Discount tiers (by total quantity)
-    update_option('annesfs_tier_5_qty',   intval(  $_POST['annesfs_tier_5_qty']  ?? 5));
-    update_option('annesfs_tier_5_disc',  floatval($_POST['annesfs_tier_5_disc'] ?? 5));
-    update_option('annesfs_tier_7_qty',   intval(  $_POST['annesfs_tier_7_qty']  ?? 7));
-    update_option('annesfs_tier_7_disc',  floatval($_POST['annesfs_tier_7_disc'] ?? 8));
-    update_option('annesfs_tier_10_qty',  intval(  $_POST['annesfs_tier_10_qty'] ?? 10));
-    update_option('annesfs_tier_10_disc', floatval($_POST['annesfs_tier_10_disc']?? 10));
+    update_option('annesfs_badge_classic',  sanitize_text_field($_POST['annesfs_badge_classic']  ?? 'classic'));
+    update_option('annesfs_badge_premium',  sanitize_text_field($_POST['annesfs_badge_premium']  ?? 'premium'));
+    update_option('annesfs_badge_elite',    sanitize_text_field($_POST['annesfs_badge_elite']    ?? 'elite'));
 
-    echo '<div class="updated"><p>Saved.</p></div>';
+    update_option('annesfs_tooltip_enabled',   isset($_POST['annesfs_tooltip_enabled'])?1:0);
+    update_option('annesfs_tooltip_text',      wp_kses_post($_POST['annesfs_tooltip_text'] ?? 'Estimate based on hearty Filipino servings (e.g., 5 medium trays × 8 guests each). Actual servings may vary depending on menu mix and whether rice/noodles are included.'));
+    update_option('annesfs_show_guest_badges', isset($_POST['annesfs_show_guest_badges'])?1:0);
+
+    update_option('annesfs_deposit_percent', floatval($_POST['annesfs_deposit_percent'] ?? 50));
+    update_option('annesfs_delivery_fee',   floatval($_POST['annesfs_delivery_fee']   ?? 25));
+    update_option('annesfs_free_delivery_over', floatval($_POST['annesfs_free_delivery_over'] ?? 600));
+    update_option('annesfs_request_quote_enabled', isset($_POST['annesfs_request_quote_enabled'])?1:0);
+
+    echo '<div class="updated"><p>Settings saved.</p></div>';
   }
 
-  $classic  = get_option('annesfs_cat_classic','classic');
-  $premium  = get_option('annesfs_cat_premium','premium');
-  $elite    = get_option('annesfs_cat_elite','elite');
   $portions = get_option('annesfs_est_portions','{"small":[2,4],"medium":[8,10],"large":[12,15]}');
-
-  // NEW: discount tier values
-  $t5  = get_option('annesfs_tier_5_qty',  5);
-  $d5  = get_option('annesfs_tier_5_disc', 5);
-  $t7  = get_option('annesfs_tier_7_qty',  7);
-  $d7  = get_option('annesfs_tier_7_disc', 8);
-  $t10 = get_option('annesfs_tier_10_qty', 10);
-  $d10 = get_option('annesfs_tier_10_disc',10);
   ?>
   <div class="wrap">
     <h1>Anne's Catering — Settings</h1>
-    <form method="post">
-      <?php wp_nonce_field('annesfs_save_settings'); ?>
+    <form method="post"><?php wp_nonce_field('annesfs_save_settings'); ?>
 
-      <h2 class="title">Badge Mapping (Category Slugs)</h2>
-      <table class="form-table">
-        <tr><th>Classic slug</th><td><input type="text" name="annesfs_cat_classic" value="<?php echo esc_attr($classic); ?>" class="regular-text"></td></tr>
-        <tr><th>Premium slug</th><td><input type="text" name="annesfs_cat_premium" value="<?php echo esc_attr($premium); ?>" class="regular-text"></td></tr>
-        <tr><th>Elite slug</th><td><input type="text" name="annesfs_cat_elite" value="<?php echo esc_attr($elite); ?>" class="regular-text"></td></tr>
-      </table>
+      <h2>Dynamic Discount Tiers</h2>
+      <label><input type="checkbox" name="annesfs_tiers_enabled" <?php checked(annesfs_bool('annesfs_tiers_enabled', true)); ?>> Enable tiers</label>
+      <p>Tier 1: Qty ≥ <input type="number" name="annesfs_t1_qty" value="<?php echo esc_attr(get_option('annesfs_t1_qty',5)); ?>" style="width:80px"> → % <input type="number" name="annesfs_t1_disc" value="<?php echo esc_attr(get_option('annesfs_t1_disc',10)); ?>" style="width:80px"></p>
+      <p>Tier 2: Qty ≥ <input type="number" name="annesfs_t2_qty" value="<?php echo esc_attr(get_option('annesfs_t2_qty',7)); ?>" style="width:80px"> → % <input type="number" name="annesfs_t2_disc" value="<?php echo esc_attr(get_option('annesfs_t2_disc',12)); ?>" style="width:80px"></p>
+      <p>Tier 3: Qty ≥ <input type="number" name="annesfs_t3_qty" value="<?php echo esc_attr(get_option('annesfs_t3_qty',9)); ?>" style="width:80px"> → % <input type="number" name="annesfs_t3_disc" value="<?php echo esc_attr(get_option('annesfs_t3_disc',15)); ?>" style="width:80px"></p>
 
-      <h2 class="title">Estimator Portions (JSON)</h2>
-      <textarea name="annesfs_est_portions" rows="5" class="large-text code"><?php echo esc_textarea($portions); ?></textarea>
+      <h2>Guest Estimator</h2>
+      <p><strong>Portion JSON</strong></p>
+      <textarea name="annesfs_est_portions" rows="4" class="large-text code"><?php echo esc_textarea($portions); ?></textarea>
+      <p><label><input type="checkbox" name="annesfs_est_show_floating" <?php checked(annesfs_bool('annesfs_est_show_floating', true)); ?>> Show floating widget (bottom-left)</label></p>
+      <p>Rice/noodle adjustment: <input type="number" name="annesfs_est_rice_adj" step="0.01" value="<?php echo esc_attr(get_option('annesfs_est_rice_adj',0.12)); ?>" style="width:100px"></p>
 
-      <h2 class="title">Discount Tiers (by total quantity)</h2>
-      <table class="form-table">
-        <tr>
-          <th>Tier 1</th>
-          <td>
-            Qty ≥ <input type="number" name="annesfs_tier_5_qty" value="<?php echo esc_attr($t5); ?>" style="width:80px;">
-            &nbsp;→&nbsp; Discount % <input type="number" name="annesfs_tier_5_disc" value="<?php echo esc_attr($d5); ?>" style="width:80px;">
-          </td>
-        </tr>
-        <tr>
-          <th>Tier 2</th>
-          <td>
-            Qty ≥ <input type="number" name="annesfs_tier_7_qty" value="<?php echo esc_attr($t7); ?>" style="width:80px;">
-            &nbsp;→&nbsp; Discount % <input type="number" name="annesfs_tier_7_disc" value="<?php echo esc_attr($d7); ?>" style="width:80px;">
-          </td>
-        </tr>
-        <tr>
-          <th>Tier 3</th>
-          <td>
-            Qty ≥ <input type="number" name="annesfs_tier_10_qty" value="<?php echo esc_attr($t10); ?>" style="width:80px;">
-            &nbsp;→&nbsp; Discount % <input type="number" name="annesfs_tier_10_disc" value="<?php echo esc_attr($d10); ?>" style="width:80px;">
-          </td>
-        </tr>
-      </table>
+      <h2>Badges & Tooltips</h2>
+      <p>Category slugs → badges: Classic <input type="text" name="annesfs_badge_classic" value="<?php echo esc_attr(get_option('annesfs_badge_classic','classic')); ?>" style="width:140px">
+       Premium <input type="text" name="annesfs_badge_premium" value="<?php echo esc_attr(get_option('annesfs_badge_premium','premium')); ?>" style="width:140px">
+       Elite <input type="text" name="annesfs_badge_elite" value="<?php echo esc_attr(get_option('annesfs_badge_elite','elite')); ?>" style="width:140px"></p>
+      <p><label><input type="checkbox" name="annesfs_show_guest_badges" <?php checked(annesfs_bool('annesfs_show_guest_badges', true)); ?>> Show guest count badges on bundle cards</label></p>
+      <p><label><input type="checkbox" name="annesfs_tooltip_enabled" <?php checked(annesfs_bool('annesfs_tooltip_enabled', true)); ?>> Enable tooltips on badges & estimator</label></p>
+      <p><textarea name="annesfs_tooltip_text" class="large-text code" rows="3"><?php echo esc_textarea(get_option('annesfs_tooltip_text', 'Estimate based on hearty Filipino servings (e.g., 5 medium trays × 8 guests each). Actual servings may vary depending on menu mix and whether rice/noodles are included.')); ?></textarea></p>
 
-      <p><button class="button button-primary" name="annesfs_save" value="1">Save settings</button></p>
-            <h2 class="title">Checkout & Payments</h2>
-      <?php $deposit = get_option('annesfs_deposit_percent', 50); ?>
-      <table class="form-table">
-        <tr>
-          <th>Deposit percent</th>
-          <td>
-            <input type="number" min="0" max="100" step="1" name="annesfs_deposit_percent" value="<?php echo esc_attr($deposit); ?>" style="width:90px;"> %
-            <p class="description">Shown in checkout summary and used in deposit math.</p>
-          </td>
-        </tr>
-      </table>
+      <h2>Payments & Delivery</h2>
+      <p>Deposit percent: <input type="number" name="annesfs_deposit_percent" value="<?php echo esc_attr(get_option('annesfs_deposit_percent',50)); ?>" style="width:100px">%</p>
+      <p>Delivery fee (flat): <input type="number" name="annesfs_delivery_fee" value="<?php echo esc_attr(get_option('annesfs_delivery_fee',25)); ?>" style="width:100px"></p>
+      <p>Free delivery over: $<input type="number" name="annesfs_free_delivery_over" value="<?php echo esc_attr(get_option('annesfs_free_delivery_over',600)); ?>" style="width:120px"></p>
 
-      <h2 class="title">Order Minimums & Delivery</h2>
-      <?php
-        $min_pickup   = get_option('annesfs_min_pickup', 50);
-        $min_delivery = get_option('annesfs_min_delivery', 150);
-        $del_fee      = get_option('annesfs_delivery_fee', 25);
-        $free_over    = get_option('annesfs_free_delivery_over', 600);
-        $kitchen_zip  = get_option('annesfs_kitchen_zip', '85392');
-        $deliver_radius = get_option('annesfs_delivery_radius_miles', 10);
-        $zip_allow    = get_option('annesfs_zip_allowlist', ''); // comma-separated
-      ?>
-      <table class="form-table">
-        <tr>
-          <th>Pickup minimum ($)</th>
-          <td><input type="number" step="1" name="annesfs_min_pickup" value="<?php echo esc_attr($min_pickup); ?>" style="width:120px;"></td>
-        </tr>
-        <tr>
-          <th>Delivery minimum ($)</th>
-          <td><input type="number" step="1" name="annesfs_min_delivery" value="<?php echo esc_attr($min_delivery); ?>" style="width:120px;"></td>
-        </tr>
-        <tr>
-          <th>Delivery fee (flat, $)</th>
-          <td><input type="number" step="1" name="annesfs_delivery_fee" value="<?php echo esc_attr($del_fee); ?>" style="width:120px;"></td>
-        </tr>
-        <tr>
-          <th>Free delivery over ($)</th>
-          <td><input type="number" step="1" name="annesfs_free_delivery_over" value="<?php echo esc_attr($free_over); ?>" style="width:120px;"></td>
-        </tr>
-        <tr>
-          <th>Kitchen ZIP (origin)</th>
-          <td><input type="text" name="annesfs_kitchen_zip" value="<?php echo esc_attr($kitchen_zip); ?>" style="width:140px;"></td>
-        </tr>
-        <tr>
-          <th>Delivery radius (miles)</th>
-          <td><input type="number" step="1" name="annesfs_delivery_radius_miles" value="<?php echo esc_attr($deliver_radius); ?>" style="width:120px;">
-            <p class="description">Used if allow‑list below is empty.</p>
-          </td>
-        </tr>
-        <tr>
-          <th>ZIP allow‑list (optional)</th>
-          <td>
-            <textarea name="annesfs_zip_allowlist" rows="3" class="large-text code" placeholder="85392, 85323, 85037"><?php echo esc_textarea($zip_allow); ?></textarea>
-            <p class="description">If provided, only these ZIPs are eligible for delivery.</p>
-          </td>
-        </tr>
-      </table>
+      <h2>Quote Flow</h2>
+      <p><label><input type="checkbox" name="annesfs_request_quote_enabled" <?php checked(annesfs_bool('annesfs_request_quote_enabled', true)); ?>> Enable “Request a Quote” alongside checkout</label></p>
 
-      <h2 class="title">Quotes & UI</h2>
-      <?php
-        $quote_emails   = get_option('annesfs_quote_recipients', get_option('admin_email'));
-        $quote_log      = get_option('annesfs_quote_log_admin', 1);
-        $ui_quote_btn   = get_option('annesfs_ui_show_quote', 1);
-        $ui_offcanvas   = get_option('annesfs_ui_offcanvas_cart', 1);
-        $thumb_size     = get_option('annesfs_minicart_thumb', 56);
-      ?>
-      <table class="form-table">
-        <tr>
-          <th>Quote notification emails</th>
-          <td>
-            <input type="text" name="annesfs_quote_recipients" value="<?php echo esc_attr($quote_emails); ?>" class="regular-text">
-            <p class="description">Comma‑separated list. Default is your admin email.</p>
-          </td>
-        </tr>
-        <tr>
-          <th>Log quotes in WP Admin</th>
-          <td><label><input type="checkbox" name="annesfs_quote_log_admin" value="1" <?php checked($quote_log,1); ?>> Enable</label></td>
-        </tr>
-        <tr>
-          <th>Show “Request a Quote” button</th>
-          <td><label><input type="checkbox" name="annesfs_ui_show_quote" value="1" <?php checked($ui_quote_btn,1); ?>> Enable</label></td>
-        </tr>
-        <tr>
-          <th>Use off‑canvas cart</th>
-          <td><label><input type="checkbox" name="annesfs_ui_offcanvas_cart" value="1" <?php checked($ui_offcanvas,1); ?>> Enable</label></td>
-        </tr>
-        <tr>
-          <th>Mini‑cart image size (px)</th>
-          <td><input type="number" step="1" name="annesfs_minicart_thumb" value="<?php echo esc_attr($thumb_size); ?>" style="width:120px;"></td>
-        </tr>
-      </table>
+      <p><button class="button button-primary" name="annesfs_save">Save settings</button></p>
     </form>
   </div>
-  <?php
-}
+<?php } ?>
