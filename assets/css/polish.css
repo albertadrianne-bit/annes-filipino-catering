@@ -1,0 +1,27 @@
+/* Mini-cart polish */
+.woocommerce-mini-cart .woocommerce-mini-cart-item {
+  display:grid;grid-template-columns:56px 1fr auto;grid-template-areas:'thumb title remove' 'thumb meta remove';
+  gap:10px 12px;align-items:start;padding:10px 0;border-bottom:1px solid #eee;
+}
+.woocommerce-mini-cart .woocommerce-mini-cart-item img{grid-area:thumb;width:56px;height:56px;object-fit:cover;border-radius:8px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.woocommerce-mini-cart .woocommerce-mini-cart-item > a:not(.remove){grid-area:title;font-weight:600;font-size:13px;line-height:1.35;color:#1f2937;text-decoration:none}
+.woocommerce-mini-cart .quantity{grid-area:meta;font-size:12.5px;color:#475569}
+.woocommerce-mini-cart .remove_from_cart_button.remove{grid-area:remove;font-size:16px;color:#9ca3af;width:24px;height:24px;line-height:24px;text-align:center;border-radius:999px;transition:all .15s ease;margin-left:6px}
+.woocommerce-mini-cart .remove_from_cart_button.remove:hover{color:#fff;background:#ef4444}
+.woocommerce-mini-cart__total{display:flex;justify-content:space-between;align-items:center;font-weight:700;padding-top:8px;margin-top:8px;border-top:2px solid #f1f5f9}
+
+/* Tooltip via data-annesfs-tip */
+[data-annesfs-tip]{position:relative;cursor:help}
+[data-annesfs-tip]::after{content:attr(data-annesfs-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%);max-width:260px;background:#111827;color:#fff;font-size:12px;line-height:1.35;padding:8px 10px;border-radius:8px;white-space:normal;opacity:0;pointer-events:none;transition:.15s ease;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+[data-annesfs-tip]:hover::after,[data-annesfs-tip]:focus::after{opacity:1}
+
+/* Bundle modal polish */
+.annesfs-bundle-panel{border:1px solid #eee}
+.annesfs-bundle-head h3{margin:0;font-size:20px}
+.annesfs-bundle-meta{color:#64748b;font-size:13px;margin-top:4px}
+.annesfs-bundle-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (min-width:1024px){.annesfs-bundle-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.annesfs-card{transition:box-shadow .15s,border-color .15s}
+.annesfs-card:hover{border-color:#d1d5db;box-shadow:0 6px 20px rgba(0,0,0,.06)}
+.annesfs-card.is-selected{border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.25)}
+.annesfs-bundle-footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #eee;padding-top:12px}
