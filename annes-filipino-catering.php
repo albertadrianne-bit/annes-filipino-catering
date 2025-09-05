@@ -23,6 +23,9 @@ add_action('wp_enqueue_scripts', function(){
 });
 
 // Includes
+require_once ANNESFS_DIR.'includes/badges.php';
+require_once ANNESFS_DIR.'includes/guest-estimator.php';
+require_once ANNESFS_DIR.'includes/checkout-modal.php';
 require_once ANNESFS_DIR.'includes/settings.php';
 require_once ANNESFS_DIR.'includes/quickview.php';
 require_once ANNESFS_DIR.'includes/estimator-shortcode.php';
