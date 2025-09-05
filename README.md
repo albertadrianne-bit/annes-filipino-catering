@@ -1,68 +1,89 @@
 # Anne’s Filipino Catering – WordPress Plugin
 
-Custom WooCommerce extension for Anne’s Filipino Catering.  
-Built to handle catering bundles, request-a-quote workflows, guest count estimates, and polished customer experience.
+Custom WooCommerce extension for Anne’s Filipino Catering (Avondale, AZ).  
+Built to handle catering bundles, request-a-quote workflows, guest count estimates, and a polished, single-page ordering experience for pick-up or delivery.
 
 ---
 
-## 🚀 Features
-- **Bundle Builder**
-  - Predefined bundles (Sakto Lang, Salo-Salo, Mega Handaan).
-  - Supports Classic / Premium / Elite categories.
-  - Auto-guest estimate per bundle size.
+## ✨ Features
 
-- **Request-a-Quote Flow**
-  - Customers select dishes and submit quotes.
-  - Admin receives structured email + logs in WP dashboard.
-  - Deposit percent configurable in settings.
+### Bundles
+- **Party bundles** (Sakto Lang / Salo-Salo / Mega Handaan) + **Dessert-only** bundles.
+- Admin can create **custom bundles** (Anne’s Catering → **Bundles**) with:
+  - Tray count & default size
+  - Premium item cap
+  - % discount per bundle
+  - Optional **category filter** (e.g., desserts only)
+- Bundle modal: choose dishes, see **live subtotal → discount → total**, then **Add bundle to cart**.
 
-- **Quick-View Product Modal**
-  - Customers click a dish card → modal shows variations (protein, spice, etc.).
-  - Adds selected variation directly to cart/quote.
+### Quick-View Product Modal
+- “**Choose Options**” on product cards opens a modal with **variations** (protein, spice level, tray size).
+- **Add to Cart** directly from the modal (no page reload).
 
-- **Badges & Styling**
-  - Category → badge mapping (Classic, Premium, Elite).
-  - Mini-cart images polished (56×56 thumbnails, rounded corners).
+### Checkout & Quote Flow
+- Sticky mini-cart with **56×56** rounded thumbnails and **× remove**.
+- **Checkout modal** shows pick-up/delivery recap and **deposit math** (configurable %).
+- **Request a Quote** button (toggle in Settings) uses the same cart/selection flow and stores quote details for follow-up.
 
-- **Checkout Modal**
-  - Shows pickup/delivery summary + deposit breakdown.
-  - Works alongside Stripe/Square gateway testing.
+### Guest Count Estimator
+- Shortcode: `[annesfs_guest_estimator]`
+- Recommends a tray mix based on **guest count** and meal style (**Hearty / Standard / Light**) with a rice/noodle adjustment.
+- Optional floating widget (bottom-left) toggled in Settings.
 
-- **Guest Count Estimator**
-  - Shortcode: `[annesfs_guest_estimator]`
-  - Recommends tray count based on guest input.
+### Dynamic Discount Tiers (Cart-wide)
+- Tiered % off based on total **item quantity** (defaults: 5/7/9+ with 10/12/15%).
+- Fully configurable in Settings.
 
-- **Fulfillment & Admin Tools**
-  - Minimum order thresholds (pickup vs delivery).
-  - Delivery ZIP code validator.
-  - Flat delivery fee option.
-  - Seasonal/promo bundle support (future).
+### Badges & Tooltips
+- **Category → badge mapping** (Classic / Premium / Elite) by slug.
+- Optional tooltips for tray sizes / serving guidance.
+
+### Delivery & Thresholds
+- Flat delivery fee and **free delivery over** threshold.
+- (Optional) ZIP eligibility rules and minimums (pickup vs delivery).
 
 ---
 
 ## ⚙️ Installation
-1. Download the latest release (`.zip`) from GitHub.
-2. Upload to WordPress via **Plugins → Add New → Upload Plugin**.
-3. Activate the plugin.
-4. Go to **Anne’s Catering → Settings** to configure:
-   - Deposit percent
-   - Category slugs for Classic/Premium/Elite
-   - Delivery/pickup options
+
+1. Download the latest **release (.zip)** from GitHub (Releases → Assets).  
+2. WordPress → Plugins → Add New → Upload Plugin → activate.  
+3. Go to **Anne’s Catering → Settings** and click **Save** once to initialize.
 
 ---
 
-## 🖥️ Shortcodes
-- `[annesfs_guest_estimator]` → Displays guest-to-tray estimator.
+## 🔧 Configuration (Settings)
+
+- **Deposit percent** (default 50%)  
+- **Delivery fee** & **Free over** threshold  
+- **Discount tiers** (enable + set Qty/%)  
+- **Guest Estimator** JSON portions + rice/noodle adjustment + floating widget toggle  
+- **Badge mapping** for Classic/Premium/Elite category slugs  
+- **Tooltips** copy toggle & text  
+- **Request-a-Quote** enable/disable
 
 ---
 
-## 📌 Requirements
-- WordPress 6.0+
-- WooCommerce 8.0+
+## 🧩 Shortcodes
+
+- `[annesfs_guest_estimator]` → Guest-to-tray estimator block (and optional floating widget via Settings)
+
+---
+
+## 📝 Version
+
+- **Plugin Version:** `2.2.4-stable`
+
+---
+
+## 🧪 Requirements
+
+- WordPress 6.0+  
+- WooCommerce 8.0+  
 - PHP 7.4+
 
 ---
 
-## 🛠️ Development Notes
-- Version: **2.1.5**
-- Next features: discount tier configurator, badge theme customization, code cleanup.
+## 🚀 Releases
+
+Use GitHub **Tags/Releases** to generate permanent ZIPs for installation.
