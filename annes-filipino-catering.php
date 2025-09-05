@@ -35,3 +35,6 @@ require_once ANNESFS_DIR.'includes/bundles-cpt.php';
 require_once ANNESFS_DIR.'includes/bundles-frontend.php';
 require_once ANNESFS_DIR.'includes/quote-flow.php';
 require_once ANNESFS_DIR.'includes/floating-widget.php';
+
+// annes-filipino-catering.php
+require_once plugin_dir_path(__FILE__) . 'includes/updater.php';
