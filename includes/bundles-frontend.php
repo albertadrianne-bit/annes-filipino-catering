@@ -1,7 +1,6 @@
 <?php
 if ( ! defined('ABSPATH') ) exit;
 
-// Badge on bundle titles (feeds estimate)
 add_filter('the_title', function($title, $post_id){
   if (get_post_type($post_id)!=='annesfs_bundle') return $title;
   if (! intval(get_option('annesfs_show_guest_badges',1)) ) return $title;
@@ -15,13 +14,11 @@ add_filter('the_title', function($title, $post_id){
   return $title.$badge;
 }, 10, 2);
 
-// Add “Build bundle” button
 add_filter('the_content', function($content){
   if (get_post_type()!=='annesfs_bundle') return $content;
   return $content.'<p><a href="#" class="button annesfs-bundle-build" data-bundle="'.get_the_ID().'">Build this bundle</a></p>';
 });
 
-// Modal endpoint
 add_action('wp_ajax_annesfs_bundle_modal','annesfs_bundle_modal');
 add_action('wp_ajax_nopriv_annesfs_bundle_modal','annesfs_bundle_modal');
 
